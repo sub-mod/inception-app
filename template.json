@@ -1,0 +1,162 @@
+{
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "inceptionapp",
+        "annotations": {
+            "description": "Inception App for tensorflow server",
+            "tags": "inception-app"
+        }
+    },
+    "objects": [
+        {
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APPLICATION_NAME}",
+                "labels": {
+                    "appid": "inception-app-${APPLICATION_NAME}"
+                }
+            },
+            "spec": {
+                "tags": [
+                    {
+                        "name": "latest",
+                        "from": {
+                            "kind": "DockerImage",
+                            "name": "submod/inception-app:latest"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APPLICATION_NAME}",
+                "labels": {
+                    "appid": "inception-app-${APPLICATION_NAME}"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Rolling"
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "${APPLICATION_NAME}"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "${APPLICATION_NAME}:latest"
+                            }
+                        }
+                    }
+                ],
+                "replicas": 1,
+                "selector": {
+                    "deploymentconfig": "${APPLICATION_NAME}"
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "appid": "inception-app-${APPLICATION_NAME}",
+                            "deploymentconfig": "${APPLICATION_NAME}"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "${APPLICATION_NAME}",
+                                 "env": [
+                                        {
+                                            "name": "PREDICTION_HOST1",
+                                            "value": "${PREDICTION_SERVICE1}"
+                                        },
+                                        {
+                                            "name": "PREDICTION_PORT1",
+                                            "value": "6006"
+                                        }
+                                ],
+                                "image": "${APPLICATION_NAME}:latest",
+                                "ports": [
+                                    {
+                                        "containerPort": 8000,
+                                        "protocol": "TCP"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APPLICATION_NAME}",
+                "labels": {
+                    "appid": "inception-app-${APPLICATION_NAME}"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "8000-tcp",
+                        "protocol": "TCP",
+                        "port": 8000,
+                        "targetPort": 8000
+                    }
+                ],
+                "selector": {
+                    "deploymentconfig": "${APPLICATION_NAME}"
+                }
+            }
+        },
+        {
+            "kind": "Route",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${APPLICATION_NAME}",
+                "labels": {
+                    "appid": "inception-app-${APPLICATION_NAME}"
+                }
+            },
+            "spec": {
+                "host": "",
+                "to": {
+                    "kind": "Service",
+                    "name": "${APPLICATION_NAME}",
+                    "weight": 100
+                },
+                "port": {
+                    "targetPort": "8000-tcp"
+                }
+            }
+        }
+    ],
+    "parameters": [
+        {
+            "name": "APPLICATION_NAME",
+            "description": "The name of the application.",
+            "value": "inception-app",
+            "from": "[a-zA-Z0-9]{10}",
+            "required": true
+        },
+        {
+            "name": "PREDICTION_SERVICE1",
+            "description": "Service name of prediction endpoint.",
+            "value": "tf-inception",
+            "required": true
+        }
+    ]
+}
