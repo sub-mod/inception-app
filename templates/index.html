@@ -1,13 +1,63 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Inception App</title>
-  </head>
-  <body>
-    <h1>Inception....</h1>
-    <form action="/recognize" method="POST" enctype="multipart/form-data">
+<title>radanalytics.io</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif;}
+body, html {
+    height: 100%;
+    color: #777;
+    line-height: 1.8;
+}
+.bgimg-1, .bgimg-2, .bgimg-3 {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.bgimg-1 {
+    min-height: 30%;
+}
+.bgimg-2 {
+    min-height: 0px;
+}
+.bgimg-3 {
+    min-height: 20px;
+}
+.w3-wide {letter-spacing: 10px;}
+.w3-hover-opacity {cursor: pointer;}
+
+}
+</style>
+<body>
+
+<div class="w3-top">
+  <div class="w3-bar" id="myNavbar">
+    <a href="#home" class="w3-bar-item w3-button">HOME</a>
+  </div>
+</div>
+
+<div class="bgimg-1 w3-display-container w3-opacity-min" id="home">
+  <div class="w3-display-middle" style="white-space:nowrap;">
+    <span class="w3-center w3-padding-large w3-black w3-xlarge w3-wide w3-animate-opacity">Inception <span class="w3-hide-small">App </span></span>
+  </div>
+</div>  
+
+<div class="w3-content w3-container w3-padding-64" id="contact">
+  <h3 class="w3-center">Choose file to upload</h3>
+  <form class="w3-center" action="/recognize" method="POST" enctype="multipart/form-data">
       <input type="file" name="image" />
-      <input type="submit" />
-    </form>
-  </body>
+      <input class="w3-button w3-black fa" type="submit" />
+  </form>
+</div>
+
+<footer class="w3-center w3-black w3-padding-64 w3-opacity w3-hover-opacity-off">
+  <p>radanalytics.io</p>
+</footer>
+ 
+</body>
 </html>
